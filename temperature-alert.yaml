@@ -1,0 +1,45 @@
+blueprint:
+  name: Temperature Alert!
+  description: Triggers an Action if the outside temperature is hotter than the inside temperature
+  domain: automation
+  input:
+    outside_temperature:
+      name: Temperature to be used as outside temperature
+      selector:
+        entity:
+          filter:
+            device_class: temperature
+            domain: sensor
+    inside_temperature:
+      name: Temperature to be used as inside temperature
+      selector:
+        entity:
+          filter:
+            device_class: temperature
+            domain: sensor
+    alert_action:
+      name: Action to be executed as alert
+      selector:
+        action:
+    window_sensor:
+      name: A binary sensor to check if a window is open
+      selector:
+        entity:
+          filter:
+            domain: binary_sensor
+
+mode: single
+triggers:
+  - trigger: numeric_state
+    entity_id:
+      - !input outside_temperature
+    attribute: temperature
+    above: !input inside_temperature
+actions:
+  - alias: "Alert that fucker"
+    choose: []
+    default: !input alert_action
+conditions:
+  - condition: state
+    entity_id: !input window_sensor
+    state: "true"
