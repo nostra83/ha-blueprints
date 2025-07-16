@@ -1,0 +1,59 @@
+blueprint:
+  name: Temperature day/night cycle
+  description: Configure different tmepretures for day and night
+  domain: automation
+  input:
+    input_time_day:
+      name: Start day
+      description: When should day temperature start
+      selector:
+        time:
+    input_temperatur_day:
+      name: target temperature during day
+      selector:
+        number:
+          max: 35
+          min: 5
+    input_time_night:
+      name: Start night
+      description: The thermostat to diable if the windows is opened
+      selector:
+        time:
+    input_temperatur_night:
+      name: target temperature during night
+      selector:
+        number:
+          max: 35
+          min: 5
+    input_target_radiator:
+      name: Target Radiator
+      description: Radtiator to set temperature
+      selector:
+        target:
+          entity:
+            domain: climate
+trigger:
+  - platform: time
+    id: night_time
+    at: !input input_time_night
+  - platform: time
+    id: day_time
+    at: !input input_time_day
+action:
+  - choose:
+      - conditions:
+          condition: trigger
+          id: night_time
+        sequence:
+          - service: climate.set_temperature
+            target: !input input_target_radiator
+            data:
+              temperature: !input input_temperatur_night
+      - conditions:
+          condition: trigger
+          id: day_time
+        sequence:
+          - service: climate.set_temperature
+            target: !input input_target_radiator
+            data:
+              temperature: !input input_temperatur_day
