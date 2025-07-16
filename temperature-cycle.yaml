@@ -7,36 +7,42 @@ blueprint:
       name: Start day
       description: When should day temperature start
       selector:
-        time:
+        time: {}
     input_temperatur_day:
       name: target temperature during day
       selector:
         number:
-          max: 35
-          min: 5
+          max: 35.0
+          min: 5.0
+          step: 1.0
+          mode: slider
     input_time_night:
       name: Start night
       description: The thermostat to diable if the windows is opened
       selector:
-        time:
+        time: {}
     input_temperatur_night:
       name: target temperature during night
       selector:
         number:
-          max: 35
-          min: 5
+          max: 35.0
+          min: 5.0
+          step: 1.0
+          mode: slider
     input_target_radiator:
       name: Target Radiator
       description: Radtiator to set temperature
       selector:
         target:
           entity:
-            domain: climate
+            - domain:
+                - climate
+  source_url: https://github.com/nostra83/ha-blueprints/blob/14ef7435d0338ef301b331cd3f8cefa41e78bd87/temperature-cycle.yaml
 trigger:
-  - platform: time
+  - trigger: time
     id: night_time
     at: !input input_time_night
-  - platform: time
+  - trigger: time
     id: day_time
     at: !input input_time_day
 action:
@@ -45,7 +51,7 @@ action:
           condition: trigger
           id: night_time
         sequence:
-          - service: climate.set_temperature
+          - action: climate.set_temperature
             target: !input input_target_radiator
             data:
               temperature: !input input_temperatur_night
@@ -53,7 +59,7 @@ action:
           condition: trigger
           id: day_time
         sequence:
-          - service: climate.set_temperature
+          - action: climate.set_temperature
             target: !input input_target_radiator
             data:
               temperature: !input input_temperatur_day
