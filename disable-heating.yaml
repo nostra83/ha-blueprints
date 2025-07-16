@@ -9,24 +9,24 @@ blueprint:
       description: The relevant window
       selector:
         entity:
-          domain: binary_sensor
+          filter:
+            domain: binary_sensor
+          multiple: false
     target_thermostat:
       name: Thermostat
       description: The thermostat to diable if the windows is opened
       selector:
-        target:
-          entity:
+        entity:
+          filter:
             domain: climate
+  source_url: https://github.com/nostra83/ha-blueprints/blob/14ef7435d0338ef301b331cd3f8cefa41e78bd87/disable-heating.yaml
 trigger:
-  - platform: state
+  - trigger: state
     entity_id: !input window_sensor
 action:
-  - service: climate.set_hvac_mode
+  - action: climate.set_hvac_mode
     data:
-      hvac_mode: >
-        {% if trigger.to_state.state == "on" %}
-          off
-        {% else %}
-          heat
-        {% endif %}
+      hvac_mode:
+        "{% if trigger.to_state.state == \"on\" %}\n  off\n{% else %}\n  heat\n{%
+        endif %}\n"
     target: !input target_thermostat
