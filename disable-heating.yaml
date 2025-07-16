@@ -1,0 +1,31 @@
+blueprint:
+  name: Disable Heating
+  description: Disable thermostat if a window is opened
+  domain: automation
+  input:
+    window_sensor:
+      name: Window Sensor
+      description: The relevant window
+      selector:
+        entity:
+          domain: binary_sensor
+    target_thermostat:
+      name: Thermostat
+      description: The thermostat to diable if the windows is opened
+      selector:
+        target:
+          entity:
+            domain: climate
+trigger:
+  - platform: state
+    entity_id: !input window_sensor
+action:
+  - service: climate.set_hvac_mode
+    data:
+      hvac_mode: >
+        {% if trigger.to_state.state == "on" %}
+          off
+        {% else %}
+          heat
+        {% endif %}
+    target: !input target_thermostat
