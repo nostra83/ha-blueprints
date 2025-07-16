@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=http://schemas.homeassistant.io/
 blueprint:
   name: Disable Heating
   description: Disable thermostat if a window is opened
